@@ -1,0 +1,42 @@
+= Welcome to DataStax Streaming Documentation
+
+++++
+<style>
+.nav-container, .toc{
+display: none;
+}
+</style>
+++++
+
+Get started with Astra Streaming today!
+
+== Choose from out different streaming products:
+[cols="1,1"]
+|===
+|xref:learning::overview.adoc[*Learning Site*]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+|xref:luna-streaming::overview.adoc[*Luna Streaming*]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+|xref:astra-streaming::overview.adoc[Astra Streaming]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+|*Starlight APIs*
+
+xref:starlight-for-jms::overview.adoc[Starlight for JMS]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+xref:starlight-for-kafka::overview.adoc[Starlight for Kafka]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+xref:starlight-for-rabbitmq::overview.adoc[Starlight for RabbitMQ]
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+|===
