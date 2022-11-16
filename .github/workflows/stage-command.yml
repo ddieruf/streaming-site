@@ -14,7 +14,8 @@ jobs:
       - name: Validate command
         id: validate
         run: |
-          
+          docName="${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}"
+          [[ -z "${docName}" ]] && { echo "error-message=Please provide a doc name as the second argument" >> $GITHUB_OUTPUT; exit 1; }
           exit 0;
 
       - name: Checkout scripsi
@@ -29,7 +30,11 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Add building message
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Add installing message
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
@@ -39,7 +44,7 @@ jobs:
           body: |
             > Building & installing bsys package
 
-      - name: Run bsys command
+      - name: Install bsys
         id: installBsys
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
@@ -64,6 +69,7 @@ jobs:
         id: buildSite
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
+          docName="${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}"
 
           #bsys -h
           #bsys lsd
@@ -73,7 +79,7 @@ jobs:
             --githubUsername "${{ github.event.client_payload.github.actor }}" \
             --githubToken "${{ secrets.ddieruf }}" \
             build \
-            datastaxStreaming
+            ${docName}
 
       - name: Add staging message
         uses: peter-evans/create-or-update-comment@v2
