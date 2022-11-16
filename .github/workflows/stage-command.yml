@@ -4,27 +4,46 @@ on:
     types: [stage]
 
 jobs:
-  PingCommand:
+  StageCommand:
     runs-on: ubuntu-latest
     steps:
-      - name: Environment
-        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-        run: env
-
-      - name: Client payload context
-        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        run: echo "$PAYLOAD_CONTEXT"
-
       - name: Create URL to the run output
         id: runUrl
         run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
 
+      - name: Validate command
+        id: validate
+        run: |
+          
+          exit 0;
+
+      - name: Checkout scripsi
+        uses: actions/checkout@v3
+        with:
+          repository: 'ddieruf/scripsi'
+          ref: 'new-features-for-streaming'
+          token: ${{ secrets.ddieruf }}
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
       - name: Run bsys command
-        if: ${{ success() }}
         id: bsysCmd
-        run: echo "message=Staging done" >> $GITHUB_OUTPUT
+        run: |
+          ls ./scripsi
+          #python ./scripsi/bsys/setup.py sdist bdist_wheel
+          #pip install
+          
+          #bsys --automated \
+          #  --verbose \
+          #  --npmScriptName "build:prod" \
+          #  --githubUsername "${{ github.event.client_payload.github.actor }}" \
+          #  --githubToken "xxxxx" \
+          #  build \
+          #  datastaxStreaming
+          
+          #bsys stage datastaxStreaming preview
 
       - name: Add hooray reaction
         uses: peter-evans/create-or-update-comment@v2
