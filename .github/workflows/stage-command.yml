@@ -6,6 +6,9 @@ jobs:
   helloWorld:
     runs-on: ubuntu-latest
     steps:
+      - name: Environment context
+        run: echo env
+
       - name: Client payload context
         env:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
@@ -20,11 +23,3 @@ jobs:
       - name: Create URL to the run output
         id: vars
         run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
-
-      - name: Update comment
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          body: |
-            > pong ${{ github.event.client_payload.slash_command.args.all }}
-          reaction-type: hooray
