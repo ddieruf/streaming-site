@@ -14,28 +14,28 @@ jobs:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
         run: echo "$PAYLOAD_CONTEXT"
 
+      - name: Create URL to the run output
+        id: vars
+        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
+
       - name: Add reaction
         uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: hooray
 
-      - name: Create URL to the run output
-        id: vars
-        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
-
-      - name: Update comment
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          body: |
-            Hello @${{ github.event.client_payload.github.actor }}!
-            
-            [Click here to see the command run output][1]
-            
-            [1]: ${{ steps.vars.outputs.run-url }}
+#      - name: Update comment
+#        uses: peter-evans/create-or-update-comment@v2
+#        with:
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          body: |
+#            Hello @${{ github.event.client_payload.github.actor }}!
+#
+#            [Click here to see the command run output][1]
+#
+#            [1]: ${{ steps.vars.outputs.run-url }}
 
 #      - name: Create comment
 #        uses: peter-evans/create-or-update-comment@v2
