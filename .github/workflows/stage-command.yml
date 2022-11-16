@@ -33,9 +33,14 @@ jobs:
         id: bsysCmd
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
+          
+          echo "Building bsys"
           python setup.py sdist bdist
+          
+          echo "Installing bsys"
           pip install --upgrade ./dist/bsys-0.3.1.tar.gz
           
+          echo "Running bsys"
           bsys lsd
           #bsys --automated \
           #  --verbose \
