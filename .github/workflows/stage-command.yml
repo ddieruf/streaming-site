@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: 'ddieruf/scripsi'
-          ref: 'new-features-for-streaming'
+          ref: 'testing-workflow'
           token: ${{ secrets.ddieruf }}
           path: 'scripsi'
 
@@ -32,10 +32,9 @@ jobs:
       - name: Run bsys command
         id: bsysCmd
         run: |
-          pushd $GITHUB_WORKSPACE/scripsi/bsys
+          cd $GITHUB_WORKSPACE/scripsi/bsys
           python setup.py sdist bdist
           pip install --upgrade ./dist/bsys-0.3.1.tar.gz
-          popd
           
           bsys lsd
           #bsys --automated \
