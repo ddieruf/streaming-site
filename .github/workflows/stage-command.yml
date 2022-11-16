@@ -32,9 +32,8 @@ jobs:
       - name: Run bsys command
         id: bsysCmd
         run: |
-          ls $GITHUB_WORKSPACE/scripsi
-          #python ./scripsi/bsys/setup.py sdist bdist_wheel
-          #pip install
+          python $GITHUB_WORKSPACE/scripsi/bsys/setup.py clean --all sdist bdist_wheel
+          pip install
           
           #bsys --automated \
           #  --verbose \
