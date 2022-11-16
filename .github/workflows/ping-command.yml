@@ -17,8 +17,14 @@ jobs:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
         run: echo "$PAYLOAD_CONTEXT"
 
-      - uses: actions/checkout@v3
+      - name: Add hooray reaction
+        uses: peter-evans/create-or-update-comment@v2
+        if: ${{ success() }}
         with:
-          ref: ${{ github.event.client_payload.ref }}
-
-      - run: echo "message=pong ${{ github.event.client_payload.slash_command.args.all }}" >> $GITHUB_OUTPUT
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray
+          body: |
+            > Hi @${{ github.event.client_payload.github.actor }}. Pong.
