@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Environment context
-        run: echo env
+        run: env
 
       - name: Client payload context
         env:
