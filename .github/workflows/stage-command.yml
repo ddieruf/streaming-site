@@ -1,0 +1,54 @@
+name: Stage Command
+on:
+  repository_dispatch:
+    types: [stage]
+
+jobs:
+  PingCommand:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Environment
+        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
+        run: env
+
+      - name: Client payload context
+        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
+        env:
+          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
+        run: echo "$PAYLOAD_CONTEXT"
+
+      - name: Create URL to the run output
+        id: runUrl
+        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
+
+      - name: Run bsys command
+        if: ${{ success() }}
+        id: bsysCmd
+        run: echo "message=Staging done" >> $GITHUB_OUTPUT
+
+      - name: Add hooray reaction
+        uses: peter-evans/create-or-update-comment@v2
+        if: ${{ success() }}
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray
+          body: |
+            > Your changes have been staged.
+            > ${{ steps.bsysCmd.outputs.message }}
+
+      - name: Add confused reaction
+        uses: peter-evans/create-or-update-comment@v2
+        if: ${{ failure() }}
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: confused
+          body: |
+            > There was an error
+            
+            [Here's what happened](${{ steps.runUrl.outputs.run-url }})
