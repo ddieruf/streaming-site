@@ -6,6 +6,11 @@ jobs:
   helloWorld:
     runs-on: ubuntu-latest
     steps:
+      - name: Client payload context
+        env:
+          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
+        run: echo "$PAYLOAD_CONTEXT"
+
       - name: Add reaction
         uses: peter-evans/create-or-update-comment@v2
         with:
@@ -16,11 +21,10 @@ jobs:
         id: vars
         run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
 
-      - name: Create comment
+      - name: Update comment
         uses: peter-evans/create-or-update-comment@v2
         with:
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           body: |
-            Hello @${{ github.event.client_payload.github.actor }}!
-            [Click here to see the command run output][1]
-            [1]: ${{ steps.vars.outputs.run-url }}
+            > pong ${{ github.event.client_payload.slash_command.args.all }}
+          reaction-type: hooray
