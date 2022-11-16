@@ -30,11 +30,11 @@ jobs:
       - name: Validate command
         id: validate
         run: |
-          [[ -z "${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; }
+          [[ -z "${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; exit 1; }
 
       - name: Process command
         id: process
-        if: not steps.validate.outputs.error-message
+        if: ${{ success() }}
         uses: peter-evans/repository-dispatch@v2
         with:
           event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
@@ -61,7 +61,7 @@ jobs:
 
       - name: Add hooray reaction
         uses: peter-evans/create-or-update-comment@v2
-        if: (not steps.process.outputs.error-message) && (not steps.validate.outputs.error-message)
+        if: ${{ success() }}
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
@@ -71,7 +71,7 @@ jobs:
 
       - name: Add confused reaction
         uses: peter-evans/create-or-update-comment@v2
-        if: (steps.process.outputs.error-message) || (steps.validate.outputs.error-message)
+        if: ${{ failure() }}
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
