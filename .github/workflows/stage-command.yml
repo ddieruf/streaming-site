@@ -33,7 +33,7 @@ jobs:
         id: bsysCmd
         run: |
           pushd $GITHUB_WORKSPACE/scripsi/bsys
-          python setup.py --all sdist bdist
+          python setup.py sdist bdist
           pip install --upgrade ./dist/bsys-0.3.1.tar.gz
           popd
           
@@ -45,6 +45,8 @@ jobs:
           #  --githubToken "xxxxx" \
           #  build \
           #  datastaxStreaming
+          
+          #bsys -a -v -o "docName=astraStreaming,url=ssh://github.com/riptano/astra-streaming-docs.git,branch=main,docSrcDir=/,deployDir=en/astra-streaming,config=site-publish.yaml" build pulsar
           
           #bsys stage datastaxStreaming preview
 
