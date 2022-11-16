@@ -62,20 +62,20 @@ jobs:
 
       - name: Run bsys command
         id: runBsys
+        env:
+
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
 
-          bsys -h
-          bsys lsd
-          #bsys --automated \
-          #  --verbose \
-          #  --npmScriptName "build:prod" \
-          #  --githubUsername "${{ github.event.client_payload.github.actor }}" \
-          #  --githubToken "xxxxx" \
-          #  build \
-          #  datastaxStreaming
-          
-          #bsys -a -v -o "docName=astraStreaming,url=ssh://github.com/riptano/astra-streaming-docs.git,branch=main,docSrcDir=/,deployDir=en/astra-streaming,config=site-publish.yaml" build pulsar
+          #bsys -h
+          #bsys lsd
+          bsys --automated \
+            --verbose \
+            --npmScriptName "build:prod" \
+            --githubUsername "${{ github.event.client_payload.github.actor }}" \
+            --githubToken "${{ secrets.ddieruf }}" \
+            build \
+            datastaxStreaming
           
           #bsys stage datastaxStreaming preview
 
@@ -89,7 +89,7 @@ jobs:
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: hooray
           body: |
-            > Your changes have been staged.
+            > Your changes have been staged
             > ${{ steps.bsysCmd.outputs.message }}
 
       - name: Add confused reaction
