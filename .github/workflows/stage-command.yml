@@ -58,12 +58,10 @@ jobs:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           body: |
-            > Running bsys command
+            > Building the site
 
-      - name: Run bsys command
-        id: runBsys
-        env:
-
+      - name: Build site
+        id: buildSite
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
 
@@ -76,7 +74,21 @@ jobs:
             --githubToken "${{ secrets.ddieruf }}" \
             build \
             datastaxStreaming
-          
+
+      - name: Add staging message
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          body: |
+            > Staging the site
+
+      - name: Stage site
+        id: stageSite
+        run: |
+          cd $GITHUB_WORKSPACE/scripsi/bsys
           #bsys stage datastaxStreaming preview
 
       - name: Add hooray reaction
