@@ -28,7 +28,7 @@ jobs:
         run: echo "$PAYLOAD_CONTEXT"
 
       - name: Create URL to the run output
-        id: vars
+        id: runUrl
         run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
 
       - name: Validate command
@@ -58,7 +58,7 @@ jobs:
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: hooray
           body: |
-            [1]: ${{ steps.vars.outputs.run-url }}
+            [1]: ${{ steps.runUrl.outputs.run-url }}
             
             [Here's the action detail][1]
 
