@@ -1,9 +1,11 @@
-name: Stage Command
+name: Docsbot Command
 on:
   repository_dispatch:
-    types: [stage-command]
+    types:
+      - docsbot-command
+      - docbot-command
 jobs:
-  helloWorld:
+  ProcessBotCommand:
     runs-on: ubuntu-latest
     steps:
       - name: Environment context
