@@ -35,10 +35,12 @@ jobs:
         id: validate
         run: |
           cmd="${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}";
-          [[ -z "${cmd}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; exit 1; };
+          [[ -z "${cmd}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; exit 1; }
           
           array=("ping" "stage");
-          [[ ! " ${array[*]} " =~ " ${cmd} " ]] && { echo "error-message=I don't know what the command \"${cmd}\" means" >> $GITHUB_OUTPUT; exit 1;};
+          [[ ! " ${array[*]} " =~ " ${cmd} " ]] && { echo "error-message=I don't know what the command \"${cmd}\" means" >> $GITHUB_OUTPUT; exit 1;}
+          
+          exit 0;
 
       - name: Process command
         id: process
@@ -75,4 +77,4 @@ jobs:
             > ${{ steps.validate.outputs.error-message }}
             > ${{ steps.process.outputs.error-message }}
             
-            [Here's the action detail](${{ steps.runUrl.outputs.run-url }})
+            [Here's what happened](${{ steps.runUrl.outputs.run-url }})

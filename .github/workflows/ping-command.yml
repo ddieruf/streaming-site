@@ -4,7 +4,7 @@ on:
     types: [ping]
 
 jobs:
-  myEvent:
+  PingCommand:
     runs-on: ubuntu-latest
     steps:
       - name: Environment
