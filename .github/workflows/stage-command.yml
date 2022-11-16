@@ -23,6 +23,7 @@ jobs:
           repository: 'ddieruf/scripsi'
           ref: 'new-features-for-streaming'
           token: ${{ secrets.ddieruf }}
+          path: 'scripsi'
 
       - uses: actions/setup-python@v4
         with:
@@ -31,7 +32,7 @@ jobs:
       - name: Run bsys command
         id: bsysCmd
         run: |
-          ls ./scripsi
+          ls $GITHUB_WORKSPACE/scripsi
           #python ./scripsi/bsys/setup.py sdist bdist_wheel
           #pip install
           
