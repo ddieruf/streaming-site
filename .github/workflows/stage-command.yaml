@@ -3,7 +3,7 @@ on:
   repository_dispatch:
     types: [stage-command]
 jobs:
-  helloWorld:
+  stage:
     runs-on: ubuntu-latest
     steps:
       - name: Add reaction
