@@ -58,9 +58,9 @@ jobs:
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: hooray
           body: |
+            > ${{ steps.validate.outputs.message }}
             
-            [Here's the action detail][1]
-            [1]: ${{ steps.runUrl.outputs.run-url }}
+            [Here's the action detail](${{ steps.runUrl.outputs.run-url }})
 
       - name: Add confused reaction
         uses: peter-evans/create-or-update-comment@v2
@@ -75,5 +75,4 @@ jobs:
             > ${{ steps.validate.outputs.error-message }}
             > ${{ steps.process.outputs.error-message }}
             
-            [Here's the action detail][1]
-            [1]: ${{ steps.runUrl.outputs.run-url }}
+            [Here's the action detail](${{ steps.runUrl.outputs.run-url }})
