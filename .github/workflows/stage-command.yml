@@ -32,9 +32,12 @@ jobs:
       - name: Run bsys command
         id: bsysCmd
         run: |
-          python $GITHUB_WORKSPACE/scripsi/bsys/setup.py clean --all sdist bdist
-          pip install
+          pushd $GITHUB_WORKSPACE/scripsi/bsys
+          python setup.py --all sdist bdist
+          pip install --upgrade ./dist/bsys-0.3.1.tar.gz
+          popd
           
+          bsys lsd
           #bsys --automated \
           #  --verbose \
           #  --npmScriptName "build:prod" \
