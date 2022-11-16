@@ -50,7 +50,7 @@ jobs:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
         with:
           event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
-          client-payload: ${PAYLOAD_CONTEXT}
+          client-payload: ${{ env.PAYLOAD_CONTEXT }}
 
       - name: Add hooray reaction
         uses: peter-evans/create-or-update-comment@v2
