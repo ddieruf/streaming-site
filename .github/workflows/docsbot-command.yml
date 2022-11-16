@@ -8,7 +8,7 @@ jobs:
   ProcessBotCommand:
     runs-on: ubuntu-latest
     steps:
-      - name: Environment context
+      - name: Environment
         run: env
 
       - name: Client payload context
@@ -28,6 +28,13 @@ jobs:
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: hooray
+          body: |
+            Hello @${{ github.event.client_payload.github.actor }}!
+            
+            [Click here to see the command run output][1]
+            
+            [1]: ${{ steps.vars.outputs.run-url }}
+
 
 #      - name: Update comment
 #        uses: peter-evans/create-or-update-comment@v2
