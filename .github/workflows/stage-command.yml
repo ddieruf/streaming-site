@@ -41,6 +41,9 @@ jobs:
           pip install --upgrade ./dist/bsys-0.3.1.tar.gz
           
           echo "Running bsys"
+          ls
+          ls ./bin
+          bsys -h
           bsys lsd
           #bsys --automated \
           #  --verbose \
