@@ -29,8 +29,18 @@ jobs:
         with:
           python-version: '3.9'
 
+      - name: Add building message
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          body: |
+            > Building & installing bsys package
+
       - name: Run bsys command
-        id: bsysCmd
+        id: installBsys
         run: |
           cd $GITHUB_WORKSPACE/scripsi/bsys
           
@@ -39,8 +49,22 @@ jobs:
           
           echo "Installing bsys"
           pip install --upgrade ./dist/bsys-0.3.1.tar.gz
-          
-          echo "Running bsys"
+
+      - name: Add building message
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          body: |
+            > Running bsys command
+
+      - name: Run bsys command
+        id: runBsys
+        run: |
+          cd $GITHUB_WORKSPACE/scripsi/bsys
+
           bsys -h
           bsys lsd
           #bsys --automated \
