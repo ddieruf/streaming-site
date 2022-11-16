@@ -8,10 +8,21 @@ jobs:
   ProcessBotCommand:
     runs-on: ubuntu-latest
     steps:
+      - name: Add seen reaction
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: seen
+
       - name: Environment
+        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
         run: env
 
       - name: Client payload context
+        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
         env:
           PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
         run: echo "$PAYLOAD_CONTEXT"
@@ -27,7 +38,6 @@ jobs:
           repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
           issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          reaction-type: hooray
           body: |
             Hello @${{ github.event.client_payload.github.actor }}!
             
@@ -35,27 +45,20 @@ jobs:
             
             [1]: ${{ steps.vars.outputs.run-url }}
 
+      - name: Add hooray reaction
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray
 
-#      - name: Update comment
-#        uses: peter-evans/create-or-update-comment@v2
-#        with:
-#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-#          body: |
-#            Hello @${{ github.event.client_payload.github.actor }}!
-#
-#            [Click here to see the command run output][1]
-#
-#            [1]: ${{ steps.vars.outputs.run-url }}
-
-#      - name: Create comment
-#        uses: peter-evans/create-or-update-comment@v2
-#        with:
-#          token: ${{ secrets.PAT }}
-#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-#          body: |
-#            [Command run output][1]
-#
-#            [1]: ${{ steps.vars.outputs.run-url }}
+      - name: Add confused reaction
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: confused
