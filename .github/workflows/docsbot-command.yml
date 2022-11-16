@@ -38,7 +38,7 @@ jobs:
           [[ -z "${cmd}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; exit 1; };
           
           array=("ping" "stage");
-          [[ ! " ${array[*]} " =~ " ${cmd} " ]] && { echo "I don't know what the command \"${cmd}\" means" >> $GITHUB_OUTPUT; exit 1;};
+          [[ ! " ${array[*]} " =~ " ${cmd} " ]] && { echo "error-message=I don't know what the command \"${cmd}\" means" >> $GITHUB_OUTPUT; exit 1;};
 
       - name: Process command
         id: process
@@ -72,7 +72,7 @@ jobs:
           comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
           reaction-type: confused
           body: |
-            [1]: ${{ steps.vars.outputs.run-url }}
+            [1]: ${{ steps.runUrl.outputs.run-url }}
             > ${{ steps.validate.outputs.error-message }}
             > ${{ steps.process.outputs.error-message }}
             
