@@ -6,6 +6,12 @@ jobs:
   helloWorld:
     runs-on: ubuntu-latest
     steps:
+      - name: Add reaction
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          reaction-type: hooray
+
       - name: Update comment
         uses: peter-evans/create-or-update-comment@v2
         with:
