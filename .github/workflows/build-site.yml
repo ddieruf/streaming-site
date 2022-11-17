@@ -56,8 +56,7 @@ jobs:
         if: success()
         working-directory: ${{ github.workspace }}/scripsi/bsys
         run: |
-          bsys lsd >> $GITHUB_WORKSPACE/bsys-build.log
-          ls $GITHUB_WORKSPACE
+          bsys lsd &> $GITHUB_WORKSPACE/bsys-build.log
 #          bsys --automated \
 #            --npmScriptName "${{ github.inputs.npm-script }}" \
 #            --githubUsername "${{ inputs.antora-github-username }}" \
@@ -70,7 +69,7 @@ jobs:
         if: always()
         with:
           name: bsys-build.log
-          path: $GITHUB_WORKSPACE/bsys-build.log
+          path: ${{ github.workspace }}/bsys-build.log
 
 #      - name: Upload site
 #        uses: actions/upload-artifact@v2
