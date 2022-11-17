@@ -1,10 +1,6 @@
 name: Stage Command
 on:
   workflow_call:
-    inputs:
-      event:
-        required: true
-        type: string
     secrets:
       DOCSBOT_ACTION_TOKEN:
         required: true

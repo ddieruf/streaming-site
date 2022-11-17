@@ -70,20 +70,17 @@ jobs:
     with:
       reaction-type: eyes
 
-#  ProcessPingCommand:
-#    if: github.event.inputs.cmd == 'ping'
-#    uses: ddieruf/streaming-site/.github/workflows/ping-command.yml@draft
-#    secrets: inherit
-#    with:
-#      event: ${{ toJson(github.event) }}
-#
-#  ProcessStagingCommand:
-#    if: github.event.inputs.cmd == 'stage'
-#    uses: ddieruf/streaming-site/.github/workflows/stage-command.yml@draft
-#    secrets: inherit
-#    with:
-#      event: ${{ toJson(github.event) }}
-#      scripsi-token: ${{ secrets.ddieruf }}
+  ProcessPingCommand:
+    if: github.event.inputs.cmd == 'ping'
+    uses: ddieruf/streaming-site/.github/workflows/ping-command.yml@draft
+    secrets: inherit
+
+  ProcessStagingCommand:
+    if: github.event.inputs.cmd == 'stage'
+    uses: ddieruf/streaming-site/.github/workflows/stage-command.yml@draft
+    secrets: inherit
+    with:
+      scripsi-token: ${{ secrets.ddieruf }}
 
 #  UpateCommentWithError:
 #    uses: ./.github/workflows/update-issue-comment.yml

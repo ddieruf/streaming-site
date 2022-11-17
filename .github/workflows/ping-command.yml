@@ -2,10 +2,6 @@ name: Ping Command
 
 on:
   workflow_call:
-    inputs:
-      event:
-        required: true
-        type: string
     secrets:
       DOCSBOT_ACTION_TOKEN:
         required: true
@@ -14,18 +10,18 @@ jobs:
   PingCommand:
     runs-on: ubuntu-latest
     steps:
-      - if: fromJSON(inputs.event).inputs.comment-id == ''
+      - if: github.event.inputs.comment-id == ''
         run: exit 1
 
-      - if: fromJSON(inputs.event).inputs.repository == ''
+      - if: github.event.inputs.repository == ''
         run: exit 1
 
       - name: Add hooray reaction
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ fromJSON(inputs.event).inputs.repository }}
-          comment-id: ${{ fromJSON(inputs.event).inputs.comment-id }}
+          repository: ${{ github.event.inputs.repository }}
+          comment-id: ${{ github.event.inputs.comment-id }}
           reaction-type: hooray
           body: |
-            > Hi @${{ fromJSON(inputs.event).sender.login }}. Pong.
+            > Hi @${{ github.event.sender.login }}. Pong.
