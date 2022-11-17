@@ -65,7 +65,7 @@ jobs:
 
   AddSeenReaction:
     if: github.event.inputs.comment-id
-    uses: ddieruf/streaming-site/.github/jobs/update-issue-comment.yml@draft
+    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
