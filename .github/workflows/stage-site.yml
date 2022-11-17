@@ -24,7 +24,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ${{ github.workspace }}/scripsi/bsys
+        #working-directory: ${{ github.workspace }}/scripsi/bsys
     steps:
 #      - name: Checkout scripsi
 #        uses: actions/checkout@v3
