@@ -23,8 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          [[ -z "${{ github.inputs.doc }}" ]] && { echo "error-message=\"A bsys document name is required to build the site\"" >> $GITHUB_OUTPUT; exit 1 }
-          [[ -z "${{ github.inputs.npm-script }}" ]] && { echo "error-message=\"A bsys npm script name is required to build the site\"" >> $GITHUB_OUTPUT; exit 1 }
+          [[ -z "${{ github.inputs.doc-name }}" ]] && { echo "error-message=\"A bsys document name is required to build the site\"" >> $GITHUB_OUTPUT; exit 1 }
+          
+          exit 0;
 
   BuildSite:
     runs-on: ubuntu-latest
@@ -69,7 +70,7 @@ jobs:
             --githubUsername "${{ inputs.antora-github-username }}" \
             --githubToken "${{ secrets.antora-github-token }}" \
             build \
-            ${{ github.inputs.doc }} |& tee $GITHUB_WORKSPACE/bsys-build.log
+            ${{ github.inputs.doc-name }} |& tee $GITHUB_WORKSPACE/bsys-build.log
           
           ls ~/work
 

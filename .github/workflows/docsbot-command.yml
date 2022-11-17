@@ -49,9 +49,8 @@ on:
         default: "preview"
         description: "The server to use for staging a site"
       npm-script:
-        required: true
+        required: false
         type: string
-        default: "build:prod"
         description: "The npm script to use to build the site"
 jobs:
   PrintContext:
