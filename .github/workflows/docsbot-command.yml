@@ -73,7 +73,7 @@ jobs:
 
   ProcessPingCommand:
     if: github.event.inputs.cmd == "ping" && github.event.inputs.comment-id
-    uses: ddieruf/streaming-site/.github/workflows/{0}-command.yml@draft
+    uses: ./.github/workflows/ping-command.yml
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
