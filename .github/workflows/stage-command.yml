@@ -15,6 +15,7 @@ jobs:
       scripsi-ref: "testing-workflow"
 
   BuildDocsSite:
+    needs: BuildBsys
     uses: ddieruf/streaming-site/.github/workflows/build-site.yml@draft
     secrets:
       scripsi-token: ${{ secrets.ddieruf }}
