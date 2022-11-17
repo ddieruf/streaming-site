@@ -6,12 +6,20 @@
 #  -H "Accept: application/vnd.github+json" \
 #  -H "Authorization: Bearer <YOUR-TOKEN>" \
 #  https://api.github.com/repos/ddieruf/streaming-site/actions/workflows/docsbot-command.yml/dispatches \
-#  -d '{"ref":"main","inputs":{"repository":"ddieruf/learning","comment-id":"1317416117","cmd":"ping"}}'
+#  -d '{"ref":"main","inputs":{"repository":"ddieruf/learning","comment-id":"1317416117","cmd":"ping","log-level":"info"}}'
 
 name: Docsbot Command
 on:
   workflow_dispatch:
     inputs:
+      log-level:
+        required: false
+        type: choice
+        options:
+          - info
+          - error
+        default: error
+        description: "How chatty is docsbot"
       repository:
         description: 'The repository from which the slash command was dispatched'
         required: true
@@ -49,26 +57,19 @@ jobs:
   PrintContext:
     runs-on: ubuntu-latest
     steps:
-      - env:
+      - if: github.event.inputs.log-level == 'info'
+        env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT
 
-      - name: Add reaction
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.inputs.repository }}
-          comment-id: ${{ github.event.inputs.comment-id }}
-          reaction-type: hooray
+  AddSeenReaction:
+    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
+    secrets: inherit
+    with:
+      event: ${{ toJson(github.event) }}
+      reaction-type: seen
 
-#  AddSeenReaction:
-#    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@main
-#    secrets: inherit
-#    with:
-#      payload: ${{ toJson(github.event.client_payload) }}
-#      reaction-type: seen
-#
 #  ProcessBotCommand:
 #    runs-on: ubuntu-latest
 #    steps:
