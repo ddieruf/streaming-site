@@ -79,8 +79,6 @@ jobs:
     if: github.event.inputs.cmd == 'stage'
     uses: ddieruf/streaming-site/.github/workflows/stage-command.yml@draft
     secrets: inherit
-    with:
-      scripsi-token: ${{ secrets.ddieruf }}
 
 #  UpateCommentWithError:
 #    uses: ./.github/workflows/update-issue-comment.yml

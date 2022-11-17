@@ -2,16 +2,16 @@ name: Stage Command
 on:
   workflow_call:
     secrets:
-      DOCSBOT_ACTION_TOKEN:
+      GITHUB_TOKEN:
         required: true
-      scripsi-token:
+      ddieruf:
         required: true
 
 jobs:
   BuildBsys:
     uses: ddieruf/streaming-site/.github/workflows/build-bsys.yml@draft
     secrets:
-      scripsi-token: ${{ secrets.scripsi-token }}
+      scripsi-token: ${{ secrets.ddieruf }}
     with:
       scripsi-repo: "ddieruf/scripsi"
       scripsi-ref: "testing-workflow"
