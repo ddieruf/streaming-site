@@ -11,6 +11,8 @@ on:
     secrets:
       ddieruf:
         required: true
+      AWS_OVPN:
+        required: true
 
 jobs:
   BuildBsys:
@@ -34,11 +36,15 @@ jobs:
       doc-name: ${{ inputs.doc-name }}
       npm-script: ${{ inputs.npm-script }}
 
-#  StageDocsSite:
-#    uses: ./.github/jobs/stage-site.yml
-#    secrets: inherit
-#    with:
-#      event: ${{ toJson(github.event) }}
+  StageDocsSite:
+    uses: ./.github/jobs/stage-site.yml
+    secrets:
+      scripsi-token: ${{ secrets.ddieruf }}
+      AWS_OVPN: ${{ secrets.AWS_OVPN }}
+    with:
+      scripsi-repo: "ddieruf/scripsi"
+      scripsi-ref: "testing-workflow"
+      doc-name: ${{ inputs.doc-name }}
 
 
 
