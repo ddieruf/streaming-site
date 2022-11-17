@@ -27,28 +27,27 @@ jobs:
     defaults:
       run:
         shell: bash
-        #working-directory: ${{ github.workspace }}/scripsi/bsys
     steps:
-#      - name: Checkout scripsi
-#        uses: actions/checkout@v3
-#        with:
-#          repository: ${{ inputs.scripsi-repo }}
-#          ref: ${{ inputs.scripsi-ref }}
-#          token: ${{ secrets.scripsi-token }}
-#          path: ${{ github.workspace }}/scripsi
-#
-#      - name: Download bsys artifact
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: bsys-0.3.1.tar.gz
-#          path: ${{ github.workspace }}/scripsi/bsys/dist
-#
-#      - uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.9'
-#
-#      - name: Install bsys
-#        run: pip install --upgrade ./dist/bsys-0.3.1.tar.gz
+      - name: Checkout scripsi
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.scripsi-repo }}
+          ref: ${{ inputs.scripsi-ref }}
+          token: ${{ secrets.scripsi-token }}
+          path: ${{ github.workspace }}/scripsi
+
+      - name: Download bsys artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: bsys-0.3.1.tar.gz
+          path: ${{ github.workspace }}/scripsi/bsys/dist
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install bsys
+        run: pip install --upgrade ./dist/bsys-0.3.1.tar.gz
 
       # =======================================================
       # ESTABLISH VPN CONNECTION
@@ -60,26 +59,29 @@ jobs:
 
       # Ref: https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html
       - name: Setup VPN config
+        if: success()
         run: |
           echo "${{ secrets.AWS_OVPN }}" > $GITHUB_WORKSPACE/client.ovpn
 
       - name: Open VPN connection
+        if: success()
         run: sudo openvpn --config "$GITHUB_WORKSPACE/client.ovpn" --log "$GITHUB_WORKSPACE/vpn.log" --daemon
 
       - name: Wait for a VPN connection
+        if: success()
         timeout-minutes: 1
         run: until ping -c1 "${{ inputs.staging-server }}"; do sleep 2; done
 
       # =======================================================
       # DEPLOY
       # =======================================================
-#      - name: Deploy site
-#        id: buildSite
-#        if: success()
-#        working-directory: ${{ github.workspace }}/scripsi/bsys
-#        run: |
-#          bsys lsd
-#          # bsys deploy ${{ inputs.doc-name }} ${{ inputs.staging-server }} |& tee $GITHUB_WORKSPACE/bsys-deploy.log
+      - name: Deploy site
+        id: buildSite
+        if: success()
+        working-directory: ${{ github.workspace }}/scripsi/bsys
+        run: |
+          bsys lsd
+          # bsys deploy ${{ inputs.doc-name }} ${{ inputs.staging-server }} |& tee $GITHUB_WORKSPACE/bsys-deploy.log
 
       # =======================================================
       # CLEAN UP
@@ -88,7 +90,7 @@ jobs:
         if: always()
         run: |
           sudo chmod 777 $GITHUB_WORKSPACE/vpn.log
-          sudo killall $GITHUB_WORKSPACE/openvpn
+          sudo killall openvpn
 
       - name: Upload VPN logs
         uses: actions/upload-artifact@v2
@@ -97,9 +99,9 @@ jobs:
           name: VPN-logs
           path: ${{ github.workspace }}/vpn.log
 
-#      - name: Upload bsys deploy logs
-#        uses: actions/upload-artifact@v2
-#        if: always()
-#        with:
-#          name: bsys-deploy-logs
-#          path: ${{ github.workspace }}/bsys-deploy.log
+      - name: Upload bsys deploy logs
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: bsys-deploy-logs
+          path: ${{ github.workspace }}/bsys-deploy.log

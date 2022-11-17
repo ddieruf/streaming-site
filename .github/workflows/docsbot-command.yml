@@ -12,14 +12,14 @@ name: Docsbot Command
 on:
   workflow_dispatch:
     inputs:
-      log-level:
-        required: true
-        type: choice
-        options:
-          - info
-          - error
-        default: error
-        description: "How chatty is docsbot"
+#      log-level:
+#        required: true
+#        type: choice
+#        options:
+#          - info
+#          - error
+#        default: error
+#        description: "How chatty is docsbot"
       repository:
         description: 'The repository from which the slash command was dispatched'
         required: false
@@ -82,16 +82,3 @@ jobs:
       doc-name: ${{ inputs.doc-name }}
       npm-script: ${{ inputs.npm-script }}
       staging-server: ${{ inputs.staging-server }}
-
-#  UpateCommentWithError:
-#    uses: ./.github/workflows/update-issue-comment.yml
-#    secrets: inherit
-#    needs: ProcessBotCommand
-#    if: failure() && github.event.inputs.comment-id
-#    with:
-#      event: ${{ toJson(github.event) }}
-#      reaction-type: confused
-#      message: |
-#        > ${{ needs.AddSeenReaction.outputs.error-message }}
-#
-#        [Here's what happened](${{ needs.AddSeenReaction.outputs.run-url }})
