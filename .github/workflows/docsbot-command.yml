@@ -65,7 +65,7 @@ jobs:
 
   AddSeenReaction:
     if: github.event.inputs.comment-id
-    uses: ./.github/jobs/update-issue-comment.yml
+    uses: ddieruf/streaming-site/.github/jobs/update-issue-comment.yml@draft
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
@@ -73,14 +73,14 @@ jobs:
 
   ProcessPingCommand:
     if: github.event.inputs.cmd == 'ping'
-    uses: ./.github/workflows/ping-command.yml
+    uses: ddieruf/streaming-site/.github/workflows/ping-command.yml@draft
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
 
   ProcessStagingCommand:
     if: github.event.inputs.cmd == 'stage'
-    uses: ./.github/workflows/stage-command.yml
+    uses: ddieruf/streaming-site/.github/workflows/stage-command.yml@draft
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
