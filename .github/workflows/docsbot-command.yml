@@ -22,10 +22,10 @@ on:
         description: "How chatty is docsbot"
       repository:
         description: 'The repository from which the slash command was dispatched'
-        required: true
+        required: false
       comment-id:
         description: 'The comment-id of the slash command'
-        required: true
+        required: false
       cmd:
         required: true
         type: choice
@@ -55,68 +55,38 @@ on:
         description: "The npm script to use to build the site"
 jobs:
   PrintContext:
+    if: github.event.inputs.log-level == 'info'
     runs-on: ubuntu-latest
     steps:
-      - if: github.event.inputs.log-level == 'info'
-        env:
+      - env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           echo $EVENT_CONTEXT
 
   AddSeenReaction:
-    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
+    if: github.event.inputs.comment-id
+    uses: ./.github/workflows/update-issue-comment.yml
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
-      reaction-type: "invalid"
+      reaction-type: eyes
 
-#  ProcessBotCommand:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Environment
-#        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-#        run: env
-#
-#      - name: Client payload context
-#        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-#        env:
-#          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-#        run: echo "${PAYLOAD_CONTEXT}"
-#
-#      - name: Create URL to the run output
-#        id: runUrl
-#        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
-#
-#      - name: Validate command
-#        id: validate
-#        run: |
-#          cmd="${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}";
-#          [[ -z "${cmd}" ]] && { echo "error-message=You didn't provide a command" >> $GITHUB_OUTPUT; exit 1; }
-#
-#          array=("ping" "stage");
-#          [[ ! " ${array[*]} " =~ " ${cmd} " ]] && { echo "error-message=I don't know what the command \"${cmd}\" means" >> $GITHUB_OUTPUT; exit 1;}
-#
-#          exit 0;
-#
-##      - name: Process command
-##        id: process
-##        if: ${{ success() }}
-##        uses: peter-evans/repository-dispatch@v2
-##        env:
-##          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-##        with:
-##          event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
-##          client-payload: ${{ env.PAYLOAD_CONTEXT }}
-#
-  UpateCommentWithError:
-    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
+  ProcessPingCommand:
+    if: github.event.inputs.cmd == "ping" && github.event.inputs.comment-id
+    uses: ddieruf/streaming-site/.github/workflows/{0}-command.yml@draft
     secrets: inherit
-    needs: AddSeenReaction
-    if: ${{ failure() }}
     with:
       event: ${{ toJson(github.event) }}
-      reaction-type: confused
-      message: |
-        > ${{ needs.AddSeenReaction.outputs.error-message }}
 
-        [Here's what happened](${{ needs.AddSeenReaction.outputs.run-url }})
+#  UpateCommentWithError:
+#    uses: ./.github/workflows/update-issue-comment.yml
+#    secrets: inherit
+#    needs: ProcessBotCommand
+#    if: failure() && github.event.inputs.comment-id
+#    with:
+#      event: ${{ toJson(github.event) }}
+#      reaction-type: confused
+#      message: |
+#        > ${{ needs.AddSeenReaction.outputs.error-message }}
+#
+#        [Here's what happened](${{ needs.AddSeenReaction.outputs.run-url }})

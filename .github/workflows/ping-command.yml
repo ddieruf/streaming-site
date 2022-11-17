@@ -1,30 +1,31 @@
 name: Ping Command
+
 on:
-  repository_dispatch:
-    types: [ping]
+  workflow_call:
+    inputs:
+      event:
+        required: true
+        type: string
+    secrets:
+      DOCSBOT_ACTION_TOKEN:
+        required: true
 
 jobs:
   PingCommand:
     runs-on: ubuntu-latest
     steps:
-      - name: Environment
-        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-        run: env
+      - if: fromJSON(inputs.event).inputs.comment-id == ""
+        run: exit 1
 
-      - name: Client payload context
-        if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        run: echo "$PAYLOAD_CONTEXT"
+      - if: fromJSON(inputs.event).inputs.repository == ""
+        run: exit 1
 
       - name: Add hooray reaction
         uses: peter-evans/create-or-update-comment@v2
-        if: ${{ success() }}
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+          repository: ${{ fromJSON(inputs.event).inputs.repository }}
+          comment-id: ${{ fromJSON(inputs.event).inputs.comment-id }}
           reaction-type: hooray
           body: |
-            > Hi @${{ github.event.client_payload.github.actor }}. Pong.
+            > Hi @${{ fromJSON(inputs.event).sender.login }}. Pong.
