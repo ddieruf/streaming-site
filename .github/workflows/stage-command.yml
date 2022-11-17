@@ -37,7 +37,8 @@ jobs:
       npm-script: ${{ inputs.npm-script }}
 
   StageDocsSite:
-    uses: ./.github/jobs/stage-site.yml
+    needs: BuildDocsSite
+    uses: ddieruf/streaming-site/.github/workflows/stage-site.yml@draft
     secrets:
       scripsi-token: ${{ secrets.ddieruf }}
       AWS_OVPN: ${{ secrets.AWS_OVPN }}
