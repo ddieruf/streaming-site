@@ -27,7 +27,7 @@ jobs:
     secrets: inherit
     with:
       message: |
-        > Building bsys
+        > Getting environment ready
 
   BuildBsys:
     uses: ddieruf/streaming-site/.github/workflows/build-bsys.yml@draft
