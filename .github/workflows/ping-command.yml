@@ -14,10 +14,10 @@ jobs:
   PingCommand:
     runs-on: ubuntu-latest
     steps:
-      - if: fromJSON(inputs.event).inputs.comment-id == ""
+      - if: fromJSON(inputs.event).inputs.comment-id == ''
         run: exit 1
 
-      - if: fromJSON(inputs.event).inputs.repository == ""
+      - if: fromJSON(inputs.event).inputs.repository == ''
         run: exit 1
 
       - name: Add hooray reaction
