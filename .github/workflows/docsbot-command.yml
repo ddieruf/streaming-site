@@ -68,7 +68,7 @@ jobs:
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
-      reaction-type: seen
+      reaction-type: +1
 
 #  ProcessBotCommand:
 #    runs-on: ubuntu-latest
