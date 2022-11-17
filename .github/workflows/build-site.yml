@@ -56,13 +56,14 @@ jobs:
         if: success()
         working-directory: ${{ github.workspace }}/scripsi/bsys
         run: |
-          bsys lsd &> $GITHUB_WORKSPACE/bsys-build.log
-#          bsys --automated \
-#            --npmScriptName "${{ github.inputs.npm-script }}" \
-#            --githubUsername "${{ inputs.antora-github-username }}" \
-#            --githubToken "${{ secrets.antora-github-token }}" \
-#            build \
-#            ${{ github.inputs.doc }} 2>&1 | tee $GITHUB_WORKSPACE/bsys-build.log
+          bsys --automated \
+            --npmScriptName "${{ github.inputs.npm-script }}" \
+            --githubUsername "${{ inputs.antora-github-username }}" \
+            --githubToken "${{ secrets.antora-github-token }}" \
+            build \
+            ${{ github.inputs.doc }} &> $GITHUB_WORKSPACE/bsys-build.log
+          
+          ls ~/work
 
       - name: Upload bsys build logs
         uses: actions/upload-artifact@v2
