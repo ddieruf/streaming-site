@@ -43,7 +43,7 @@ jobs:
       - name: Download bsys artifact
         uses: actions/download-artifact@v3
         with:
-          name: bsys-0.3.1.tar.gz
+          name: bsys.tar.gz
           path: ${{ github.workspace }}/scripsi/bsys/dist
 
       - uses: actions/setup-python@v4
@@ -55,7 +55,7 @@ jobs:
           node-version: 18
 
       - name: Install bsys
-        run: pip install --upgrade ./dist/bsys-0.3.1.tar.gz
+        run: pip install --upgrade ./dist/bsys.tar.gz
 
       - name: Build site
         id: buildSite
@@ -81,4 +81,4 @@ jobs:
         if: always()
         with:
           name: site-build
-          path: ~/work/*
+          path: ~/work/**/build/site
