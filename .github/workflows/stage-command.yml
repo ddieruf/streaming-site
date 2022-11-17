@@ -24,6 +24,8 @@ jobs:
       scripsi-repo: "ddieruf/scripsi"
       scripsi-ref: "testing-workflow"
       antora-github-username: "ddieruf"
+      doc-name: ${{ github.inputs.doc-name }}
+      npm-script: ${{ github.inputs.npm-script }}
 
 #  StageDocsSite:
 #    uses: ./.github/jobs/stage-site.yml
