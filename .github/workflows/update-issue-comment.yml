@@ -25,7 +25,7 @@ jobs:
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
           repository: ${{ fromJSON(inputs.event).inputs.repository }}
-          comment-id: ${{ fromJSON(inputs.event).inputs.comment.id }}
+          comment-id: ${{ fromJSON(inputs.event).inputs.comment-id }}
           reaction-type: ${{ inputs.reaction-type }}
           body: ${{ inputs.message }}
 #
