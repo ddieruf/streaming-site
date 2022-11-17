@@ -56,7 +56,8 @@ jobs:
         if: success()
         working-directory: ${{ github.workspace }}/scripsi/bsys
         run: |
-          bsys lsd &> $GITHUB_WORKSPACE/bsys-build.log
+          bsys lsd >> $GITHUB_WORKSPACE/bsys-build.log
+          ls $GITHUB_WORKSPACE
 #          bsys --automated \
 #            --npmScriptName "${{ github.inputs.npm-script }}" \
 #            --githubUsername "${{ inputs.antora-github-username }}" \
