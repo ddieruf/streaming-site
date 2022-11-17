@@ -65,7 +65,7 @@ jobs:
 
   AddSeenReaction:
     if: github.event.inputs.comment-id
-    uses: ./.github/workflows/update-issue-comment.yml
+    uses: ./.github/jobs/update-issue-comment.yml
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
@@ -77,6 +77,14 @@ jobs:
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
+
+  ProcessStagingCommand:
+    if: github.event.inputs.cmd == 'stage'
+    uses: ./.github/workflows/stage-command.yml
+    secrets: inherit
+    with:
+      event: ${{ toJson(github.event) }}
+      scripsi-token: ${{ secrets.ddieruf }}
 
 #  UpateCommentWithError:
 #    uses: ./.github/workflows/update-issue-comment.yml

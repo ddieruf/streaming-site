@@ -1,125 +1,230 @@
 name: Stage Command
 on:
-  repository_dispatch:
-    types: [stage]
+  workflow_call:
+    inputs:
+      event:
+        required: true
+        type: string
+    secrets:
+      DOCSBOT_ACTION_TOKEN:
+        required: true
+      scripsi-token:
+        required: true
 
 jobs:
-  StageCommand:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create URL to the run output
-        id: runUrl
-        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
+  BuildBsys:
+    uses: ./.github/jobs/build-bsys.yml
+    secrets:
+      scripsi-token: ${{ secrets.scripsi-token }}
+    with:
+      scripsi-repo: "ddieruf/scripsi"
+      scripsi-ref: "testing-workflow"
 
-      - name: Validate command
-        id: validate
-        run: |
-          docName="${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}"
-          [[ -z "${docName}" ]] && { echo "error-message=Please provide a doc name as the second argument" >> $GITHUB_OUTPUT; exit 1; }
-          exit 0;
+#  BuildDocsSite:
+#    uses: ./.github/jobs/build-site.yml
+#    secrets: inherit
+#    with:
+#      event: ${{ toJson(github.event) }}
+#
+#  StageDocsSite:
+#    uses: ./.github/jobs/stage-site.yml
+#    secrets: inherit
+#    with:
+#      event: ${{ toJson(github.event) }}
 
-      - name: Checkout scripsi
-        uses: actions/checkout@v3
-        with:
-          repository: 'ddieruf/scripsi'
-          ref: 'testing-workflow'
-          token: ${{ secrets.ddieruf }}
-          path: 'scripsi'
 
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Add installing message
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          body: |
-            > Building & installing bsys package
-
-      - name: Install bsys
-        id: installBsys
-        run: |
-          cd $GITHUB_WORKSPACE/scripsi/bsys
-          
-          echo "Building bsys"
-          python setup.py sdist bdist
-          
-          echo "Installing bsys"
-          pip install --upgrade ./dist/bsys-0.3.1.tar.gz
-
-      - name: Add building message
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          body: |
-            > Building the site
-
-      - name: Build site
-        id: buildSite
-        run: |
-          cd $GITHUB_WORKSPACE/scripsi/bsys
-          docName="${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}"
-
-          #bsys -h
-          #bsys lsd
-          bsys --automated \
-            --verbose \
-            --npmScriptName "build:prod" \
-            --githubUsername "${{ github.event.client_payload.github.actor }}" \
-            --githubToken "${{ secrets.ddieruf }}" \
-            build \
-            ${docName}
-
-      - name: Add staging message
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          body: |
-            > Staging the site
-
-      - name: Stage site
-        id: stageSite
-        run: |
-          cd $GITHUB_WORKSPACE/scripsi/bsys
-          #bsys stage datastaxStreaming preview
-
-      - name: Add hooray reaction
-        uses: peter-evans/create-or-update-comment@v2
-        if: ${{ success() }}
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          reaction-type: hooray
-          body: |
-            > Your changes have been staged
-            > ${{ steps.bsysCmd.outputs.message }}
-
-      - name: Add confused reaction
-        uses: peter-evans/create-or-update-comment@v2
-        if: ${{ failure() }}
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          reaction-type: confused
-          body: |
-            > There was an error
-            
-            [Here's what happened](${{ steps.runUrl.outputs.run-url }})
+#  StageCommand:
+#    runs-on: ubuntu-latest
+#    defaults:
+#      run:
+#        shell: bash
+#        working-directory: ${{ github.workspace }}
+#    env:
+#      DOC_NAME: ${{ github.event.client_payload.slash_command.args.unnamed.arg2 }}
+#      STAGE_SERVER_NAME: ${{ github.event.client_payload.slash_command.args.named.server-name }}
+#      NPM_SCRIPT_NAME: ${{ github.event.client_payload.slash_command.args.named.npm-script }}
+#    steps:
+#      - name: Create URL to the run output
+#        id: runUrl
+#        run: echo "run-url=https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >> $GITHUB_OUTPUT
+#
+#      # =======================================================
+#      # VALIDATE & SET GLOBALS
+#      # =======================================================
+#      - name: Validate and set command vals
+#        id: validate
+#        run: |
+#          [[ -z "${DOC_NAME}" ]] && { echo "error-message=Please provide a doc name as the second argument" >> $GITHUB_OUTPUT; exit 1; }
+#
+#          export STAGE_SERVER_NAME=${STAGE_SERVER_NAME:="preview"}
+#          export NPM_SCRIPT_NAME=${STAGE_SERVER_NAME:="build:prod"}
+#          exit 0;
+#
+#      # =======================================================
+#      # CHECKOUT PROJECTS
+#      # =======================================================
+#      - name: Checkout scripsi
+#        uses: actions/checkout@v3
+#        with:
+#          repository: 'ddieruf/scripsi'
+#          ref: 'testing-workflow'
+#          token: ${{ secrets.ddieruf }}
+#          path: 'scripsi'
+#
+#      # =======================================================
+#      # INSTALL RUNTIMES
+#      # =======================================================
+#      - uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.9'
+#
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+#
+#      # =======================================================
+#      # ESTABLISH VPN CONNECTION
+#      # =======================================================
+#      - name: Install OpenVPN
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get --assume-yes --no-install-recommends install openvpn
+#
+#      # Ref: https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-working-endpoint-export.html
+#      - name: Setup VPN config
+#        run: |
+#          echo "${{ secrets.AWS_OVPN }}" > $GITHUB_WORKSPACE/client.ovpn
+#
+#      - name: Open VPN connection
+#        run: sudo openvpn --config "$GITHUB_WORKSPACE/client.ovpn" --log "$GITHUB_WORKSPACE/vpn.log" --daemon
+#
+#      - name: Wait for a VPN connection
+#        timeout-minutes: 1
+#        run: until ping -c1 ${STAGE_SERVER_NAME}; do sleep 2; done
+#
+#      # =======================================================
+#      # BUILD BSYS PACKAGE
+#      # =======================================================
+#      - name: Add installing message
+#        uses: peter-evans/create-or-update-comment@v2
+#        with:
+#          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          body: |
+#            > Building & installing bsys package
+#
+#      - name: Install bsys
+#        id: installBsys
+#        working-directory: ${{ github.workspace }}/scripsi/bsys
+#        run: |
+#          echo "Building bsys"
+#          python setup.py sdist bdist
+#
+#          echo "Installing bsys"
+#          pip install --upgrade ./dist/bsys-0.3.1.tar.gz
+#
+#      # =======================================================
+#      # BUILD WEBSITE
+#      # =======================================================
+#      - name: Add building message
+#        uses: peter-evans/create-or-update-comment@v2
+#        with:
+#          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          body: |
+#            > Building the site
+#
+#      - name: Build site
+#        id: buildSite
+#        working-directory: ${{ github.workspace }}/scripsi/bsys
+#        run: |
+#          bsys --automated \
+#            --npmScriptName "${NPM_SCRIPT_NAME}" \
+#            --githubUsername "${{ github.event.client_payload.github.actor }}" \
+#            --githubToken "${{ secrets.ddieruf }}" \
+#            build \
+#            ${DOC_NAME} 2>&1 | tee $GITHUB_WORKSPACE/bsys-build.log
+#
+#      # =======================================================
+#      # STAGE WEBSITE TO SERVER
+#      # =======================================================
+#      - name: Add staging message
+#        uses: peter-evans/create-or-update-comment@v2
+#        with:
+#          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          body: |
+#            > Staging the site on the "preview" server
+#
+#      - name: Stage site
+#        id: stageSite
+#        working-directory: ${{ github.workspace }}/scripsi/bsys
+#        run: |
+#          bsys stage ${DOC_NAME} ${STAGE_SERVER_NAME} 2>&1 | tee $GITHUB_WORKSPACE/bsys-stage.log
+#
+#      # =======================================================
+#      # COMPLETE JOB
+#      # =======================================================
+#      - name: Add hooray reaction
+#        uses: peter-evans/create-or-update-comment@v2
+#        if: ${{ success() }}
+#        with:
+#          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          reaction-type: hooray
+#          body: |
+#            > Your changes have been staged
+#            > ${{ steps.bsysCmd.outputs.message }}
+#
+#      - name: Add confused reaction
+#        uses: peter-evans/create-or-update-comment@v2
+#        if: ${{ failure() }}
+#        with:
+#          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
+#          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
+#          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
+#          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
+#          reaction-type: confused
+#          body: |
+#            > There was an error
+#
+#            [Here's what happened](${{ steps.runUrl.outputs.run-url }})
+#
+#      # =======================================================
+#      # CLEAN UP (this is done after the reactions to get feedback to user as quickly as possible)
+#      # =======================================================
+#      - name: Kill VPN connection
+#        if: always()
+#        run: |
+#          sudo chmod 777 vpn.log
+#          sudo killall $GITHUB_WORKSPACE/openvpn
+#
+#      - name: Upload VPN logs
+#        uses: actions/upload-artifact@v2
+#        if: always()
+#        with:
+#          name: VPN logs
+#          path: $GITHUB_WORKSPACE/vpn.log
+#
+#      - name: Upload bsys build logs
+#        uses: actions/upload-artifact@v2
+#        if: always()
+#        with:
+#          name: bsys build logs
+#          path: $GITHUB_WORKSPACE/bsys-build.log
+#
+#      - name: Upload bsys stage logs
+#        uses: actions/upload-artifact@v2
+#        if: always()
+#        with:
+#          name: bsys stage logs
+#          path: $GITHUB_WORKSPACE/bsys-stage.log

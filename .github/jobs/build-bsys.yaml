@@ -1,0 +1,58 @@
+name: Build bsys
+
+on:
+  workflow_call:
+    inputs:
+      scripsi-repo:
+        required: true
+        type: string
+      scripsi-ref:
+        required: true
+        type: string
+    secrets:
+      scripsi-token:
+        required: true
+
+jobs:
+  BuildBsys:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/scripsi/bsys
+    steps:
+      # =======================================================
+      # CHECKOUT PROJECTS
+      # =======================================================
+      - name: Checkout scripsi
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.scripsi-repo }}
+          ref: ${{ inputs.scripsi-ref }}
+          token: ${{ secrets.scripsi-token }}
+          path: 'scripsi'
+
+      # =======================================================
+      # INSTALL RUNTIMES
+      # =======================================================
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # =======================================================
+      # BUILD BSYS PACKAGE
+      # =======================================================
+      - name: Build bsys
+        id: installBsys
+        run: |
+          python setup.py sdist bdist
+
+      # =======================================================
+      # UPLOAD BSYS PACKAGE
+      # =======================================================
+      - name: Upload bsys artifact
+        uses: actions/upload-artifact@v2
+        if: success()
+        with:
+          name: bsys artifact
+          path: ${{ github.workspace }}/scripsi/bsys/dist/bsys-0.3.1.tar.gz
