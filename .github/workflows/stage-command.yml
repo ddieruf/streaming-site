@@ -26,7 +26,7 @@ jobs:
     uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
     with:
-      body: |
+      message: |
         > Building bsys
 
   BuildBsys:
@@ -42,7 +42,7 @@ jobs:
     uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
     with:
-      body: |
+      message: |
         > Building ${{ inputs.doc-name }}
 
   BuildDocsSite:
@@ -63,7 +63,7 @@ jobs:
     uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
     with:
-      body: |
+      message: |
         > Staging site
 
   StageDocsSite:
@@ -85,7 +85,7 @@ jobs:
     secrets: inherit
     with:
       reaction-type: horray
-      body: |
+      message: |
         > Success
 
   AddFailReaction:
@@ -94,5 +94,5 @@ jobs:
     secrets: inherit
     with:
       reaction-type: confused
-      body: |
+      message: |
         > Failed
