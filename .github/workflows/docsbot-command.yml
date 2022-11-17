@@ -72,7 +72,7 @@ jobs:
       reaction-type: eyes
 
   ProcessPingCommand:
-    if: github.event.inputs.cmd == "ping" && github.event.inputs.comment-id
+    if: github.event.inputs.cmd == 'ping'
     uses: ./.github/workflows/ping-command.yml
     secrets: inherit
     with:
