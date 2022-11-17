@@ -68,7 +68,7 @@ jobs:
     secrets: inherit
     with:
       event: ${{ toJson(github.event) }}
-      reaction-type: "+1"
+      reaction-type: "invalid"
 
 #  ProcessBotCommand:
 #    runs-on: ubuntu-latest
@@ -108,15 +108,15 @@ jobs:
 ##          event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
 ##          client-payload: ${{ env.PAYLOAD_CONTEXT }}
 #
-#  UpateCommentWithError:
-#    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@main
-#    secrets: inherit
-#    needs: ProcessBotCommand
-#    if: ${{ failure() }}
-#    with:
-#      payload: ${{ toJson(github.event.client_payload) }}
-#      reaction-type: confused
-#      message: |
-#        > ${{ needs.ProcessBotCommand.outputs.error-message }}
-#
-#        [Here's what happened](${{ needs.ProcessBotCommand.outputs.run-url }})
+  UpateCommentWithError:
+    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
+    secrets: inherit
+    needs: AddSeenReaction
+    if: ${{ failure() }}
+    with:
+      event: ${{ toJson(github.event) }}
+      reaction-type: confused
+      message: |
+        > ${{ needs.AddSeenReaction.outputs.error-message }}
+
+        [Here's what happened](${{ needs.AddSeenReaction.outputs.run-url }})
