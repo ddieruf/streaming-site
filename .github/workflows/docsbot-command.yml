@@ -5,18 +5,16 @@ on:
       - docsbot-command
       - docbot-command
 jobs:
+  AddSeenReaction:
+    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@main
+    secrets: inherit
+    with:
+      payload: ${{ toJson(github.event.client_payload) }}
+      reaction-type: seen
+
   ProcessBotCommand:
     runs-on: ubuntu-latest
     steps:
-      - name: Add seen reaction
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          reaction-type: seen
-
       - name: Environment
         if: github.event.client_payload.slash_command.args.named.log-level == 'debug'
         run: env
@@ -42,27 +40,25 @@ jobs:
           
           exit 0;
 
-      - name: Process command
-        id: process
-        if: ${{ success() }}
-        uses: peter-evans/repository-dispatch@v2
-        env:
-          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
-        with:
-          event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
-          client-payload: ${{ env.PAYLOAD_CONTEXT }}
+#      - name: Process command
+#        id: process
+#        if: ${{ success() }}
+#        uses: peter-evans/repository-dispatch@v2
+#        env:
+#          PAYLOAD_CONTEXT: ${{ toJson(github.event.client_payload) }}
+#        with:
+#          event-type: ${{ github.event.client_payload.slash_command.args.unnamed.arg1 }}
+#          client-payload: ${{ env.PAYLOAD_CONTEXT }}
 
-      - name: Add confused reaction
-        uses: peter-evans/create-or-update-comment@v2
-        if: ${{ failure() }}
-        with:
-          token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ github.event.client_payload.github.payload.repository.full_name }}
-          issue-number: ${{ github.event.client_payload.github.payload.issue.number }}
-          comment-id: ${{ github.event.client_payload.github.payload.comment.id }}
-          reaction-type: confused
-          body: |
-            > ${{ steps.validate.outputs.error-message }}
-            > ${{ steps.process.outputs.error-message }}
-            
-            [Here's what happened](${{ steps.runUrl.outputs.run-url }})
+  UpateCommentWithError:
+    uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@main
+    secrets: inherit
+    needs: ProcessBotCommand
+    if: ${{ failure() }}
+    with:
+      payload: ${{ toJson(github.event.client_payload) }}
+      reaction-type: confused
+      message: |
+        > ${{ needs.ProcessBotCommand.outputs.error-message }}
+        
+        [Here's what happened](${{ needs.ProcessBotCommand.outputs.run-url }})

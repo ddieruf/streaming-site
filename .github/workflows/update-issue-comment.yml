@@ -1,0 +1,31 @@
+name: Add message to comment
+
+on:
+  workflow_call:
+    inputs:
+      payload:
+        required: true
+        type: string
+      message:
+        required: false
+        type: string
+      reaction-type:
+        required: false
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  AddMessageToComment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add message to comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.token }}
+          repository: ${{ fromJSON(inputs.payload).repository.full_name }}
+          issue-number: ${{ fromJSON(inputs.payload).issue.number }}
+          comment-id: ${{ fromJSON(inputs.payload).comment.id }}
+          reaction-type: ${{ inputs.reaction-type }}
+          body: ${{ inputs.message }}
