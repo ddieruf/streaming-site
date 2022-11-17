@@ -3,9 +3,6 @@ name: Add message to comment
 on:
   workflow_call:
     inputs:
-      event:
-        required: true
-        type: string
       message:
         required: false
         type: string
@@ -24,8 +21,8 @@ jobs:
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.DOCSBOT_ACTION_TOKEN }}
-          repository: ${{ fromJSON(inputs.event).inputs.repository }}
-          comment-id: ${{ fromJSON(inputs.event).inputs.comment-id }}
+          repository: ${{ github.event.inputs.repository }}
+          comment-id: ${{ github.event.inputs.comment-id }}
           reaction-type: ${{ inputs.reaction-type }}
           body: ${{ inputs.message }}
 #
