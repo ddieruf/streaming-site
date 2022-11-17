@@ -81,6 +81,7 @@ jobs:
     with:
       doc-name: ${{ inputs.doc-name }}
       npm-script: ${{ inputs.npm-script }}
+      staging-server: ${{ inputs.staging-server }}
 
 #  UpateCommentWithError:
 #    uses: ./.github/workflows/update-issue-comment.yml

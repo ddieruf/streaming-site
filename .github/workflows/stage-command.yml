@@ -8,6 +8,9 @@ on:
       npm-script:
         required: true
         type: string
+      staging-server:
+        required: true
+        type: string
     secrets:
       ddieruf:
         required: true
@@ -46,6 +49,7 @@ jobs:
       scripsi-repo: "ddieruf/scripsi"
       scripsi-ref: "testing-workflow"
       doc-name: ${{ inputs.doc-name }}
+      staging-server: ${{ inputs.staging-server }}
 
 
 
