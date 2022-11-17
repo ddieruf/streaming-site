@@ -47,6 +47,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install bsys
+        working-directory: ${{ github.workspace }}/scripsi/bsys
         run: pip install --upgrade ./dist/bsys-0.3.1.tar.gz
 
       # =======================================================

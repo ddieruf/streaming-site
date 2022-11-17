@@ -30,6 +30,7 @@ jobs:
         > Getting environment ready
 
   BuildBsys:
+    needs: AddBuildBsysStatus
     uses: ddieruf/streaming-site/.github/workflows/build-bsys.yml@draft
     secrets:
       scripsi-token: ${{ secrets.ddieruf }}
@@ -38,6 +39,7 @@ jobs:
       scripsi-ref: "testing-workflow"
 
   AddBuildSiteStatus:
+    needs: BuildBsys
     if: github.event.inputs.comment-id
     uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
@@ -46,7 +48,7 @@ jobs:
         > Building ${{ inputs.doc-name }}
 
   BuildDocsSite:
-    needs: BuildBsys
+    needs: AddBuildSiteStatus
     uses: ddieruf/streaming-site/.github/workflows/build-site.yml@draft
     secrets:
       scripsi-token: ${{ secrets.ddieruf }}
@@ -59,6 +61,7 @@ jobs:
       npm-script: ${{ inputs.npm-script }}
 
   AddStageSiteStatus:
+    needs: BuildDocsSite
     if: github.event.inputs.comment-id
     uses: ddieruf/streaming-site/.github/workflows/update-issue-comment.yml@draft
     secrets: inherit
@@ -67,7 +70,7 @@ jobs:
         > Staging site
 
   StageDocsSite:
-    needs: BuildDocsSite
+    needs: AddStageSiteStatus
     uses: ddieruf/streaming-site/.github/workflows/stage-site.yml@draft
     secrets:
       scripsi-token: ${{ secrets.ddieruf }}
