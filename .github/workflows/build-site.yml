@@ -1,0 +1,79 @@
+name: Build site
+
+on:
+  workflow_call:
+    inputs:
+      scripsi-repo:
+        required: true
+        type: string
+      scripsi-ref:
+        required: true
+        type: string
+      antora-github-username:
+        required: true
+        type: string
+    secrets:
+      scripsi-token:
+        required: true
+      antora-github-token:
+        required: true
+
+jobs:
+  BuildSite:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ github.workspace }}/scripsi/bsys
+    steps:
+      - name: Checkout scripsi
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ inputs.scripsi-repo }}
+          ref: ${{ inputs.scripsi-ref }}
+          token: ${{ secrets.scripsi-token }}
+          path: ${{ github.workspace }}/scripsi
+
+      - name: Download bsys artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: bsys-0.3.1.tar.gz
+          path: ${{ github.workspace }}/scripsi/bsys/dist
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install bsys
+        run: pip install --upgrade ./dist/bsys-0.3.1.tar.gz
+
+      - name: Build site
+        id: buildSite
+        if: success()
+        working-directory: ${{ github.workspace }}/scripsi/bsys
+        run: |
+          bsys lsd 2>&1 | tee $GITHUB_WORKSPACE/bsys-build.log
+#          bsys --automated \
+#            --npmScriptName "${{ github.inputs.npm-script }}" \
+#            --githubUsername "${{ inputs.antora-github-username }}" \
+#            --githubToken "${{ secrets.antora-github-token }}" \
+#            build \
+#            ${{ github.inputs.doc }} 2>&1 | tee $GITHUB_WORKSPACE/bsys-build.log
+
+#      - name: Upload bsys build logs
+#        uses: actions/upload-artifact@v2
+#        if: always()
+#        with:
+#          name: bsys-build.log
+#          path: $GITHUB_WORKSPACE/bsys-build.log
+#
+#      - name: Upload site
+#        uses: actions/upload-artifact@v2
+#        if: always()
+#        with:
+#          name: site-build
+#          path: ~/work/**/build/site

@@ -14,12 +14,16 @@ jobs:
       scripsi-repo: "ddieruf/scripsi"
       scripsi-ref: "testing-workflow"
 
-#  BuildDocsSite:
-#    uses: ./.github/jobs/build-site.yml
-#    secrets: inherit
-#    with:
-#      event: ${{ toJson(github.event) }}
-#
+  BuildDocsSite:
+    uses: ddieruf/streaming-site/.github/workflows/build-site.yml@draft
+    secrets:
+      scripsi-token: ${{ secrets.ddieruf }}
+      antora-github-token: ${{ secrets.ddieruf }}
+    with:
+      scripsi-repo: "ddieruf/scripsi"
+      scripsi-ref: "testing-workflow"
+      antora-github-username: "ddieruf"
+
 #  StageDocsSite:
 #    uses: ./.github/jobs/stage-site.yml
 #    secrets: inherit
