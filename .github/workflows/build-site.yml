@@ -68,8 +68,6 @@ jobs:
             --githubToken "${{ secrets.antora-github-token }}" \
             build \
             ${{ inputs.doc-name }} |& tee $GITHUB_WORKSPACE/bsys-build.log
-          
-          ls ~/work
 
       - name: Upload bsys build logs
         uses: actions/upload-artifact@v2
@@ -78,9 +76,9 @@ jobs:
           name: bsys-build.log
           path: ${{ github.workspace }}/bsys-build.log
 
-#      - name: Upload site
-#        uses: actions/upload-artifact@v2
-#        if: always()
-#        with:
-#          name: site-build
-#          path: ~/work/**/build/site
+      - name: Upload site
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: site-build
+          path: ~/work/*
