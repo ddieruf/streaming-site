@@ -1,0 +1,21 @@
+= This is a test
+
+Helo there this is a test
+
+// tag::some-area[]
+== Some tagged area
+
+Here is a tagged area
+// end::some-area[]
+
+Here is some more text
+
+// tag::source-area[]
+This is soruce code
+
+[source,shell,subs="attributes+"]
+----
+curl -sS --fail --location ''$WEB_SERVICE_URL'/admin/v3/sinks/'$TENANT'/'$NAMESPACE'/'$SINK_NAME'' \
+  --header "Authorization: Bearer $ASTRA_STREAMING_TOKEN"
+----
+// end::source-area[]
