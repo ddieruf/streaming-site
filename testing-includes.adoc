@@ -23,15 +23,3 @@ curl -sS --fail --location ''$WEB_SERVICE_URL'/admin/v3/sinks/'$TENANT'/'$NAMESP
   --header "Authorization: Bearer $ASTRA_STREAMING_TOKEN"
 ----
 // end::source-area[]
-
-[source]
- ----
-\ifdef::env-github[] <1> (1)
-:imagesdir: https://gist.githubusercontent.com/path/to/gist/revision/dir/with/all/images
-endif::[]
-\ifndef::env-github[] <2>
-:imagesdir: ./
-endif::[]
- ----
-<1> Use the `ifdef` to customize for online rendering (2)
-<2> Use the `ifndef` to customize for offline
