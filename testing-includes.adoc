@@ -1,8 +1,6 @@
 ifdef::env-github[]
-:imagesdir: foo/
-endif::[]
-
 = This is a test
+endif::[]
 
 Helo there this is a test
 
