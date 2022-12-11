@@ -19,3 +19,5 @@ curl -sS --fail --location ''$WEB_SERVICE_URL'/admin/v3/sinks/'$TENANT'/'$NAMESP
   --header "Authorization: Bearer $ASTRA_STREAMING_TOKEN"
 ----
 // end::source-area[]
+
+include::https://raw.githubusercontent.com/ddieruf/streaming-site/draft/site-main/modules/ROOT/pages/index.adoc[]
